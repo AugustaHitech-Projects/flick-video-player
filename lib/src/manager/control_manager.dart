@@ -43,14 +43,21 @@ class FlickControlManager extends ChangeNotifier {
     if (kIsWeb) {
       Duration position =
           _flickManager.flickVideoManager!.videoPlayerValue!.position;
-
       // trigger controllers again after exiting full screen in web
       _flickManager.handleChangeVideo(VideoPlayerController.network(
           _flickManager.flickVideoManager!.videoPlayerController!.dataSource));
-      togglePlay();
-      _notify();
-      Future.delayed(Duration(milliseconds: 300),
-          () => _flickManager.flickControlManager!.seekTo(position));
+      if (position != null) {
+        _flickManager.flickControlManager!.addListener(() {
+          if (_flickManager
+                  .flickVideoManager!.videoPlayerController!.value.isPlaying &&
+              _flickManager.flickVideoManager!.videoPlayerController!.value
+                      .position.inSeconds <
+                  position.inSeconds) {
+            _flickManager.flickControlManager!.seekTo(position);
+            _flickManager.flickControlManager!.autoResume();
+          }
+        });
+      }
     }
     _isFullscreen = false;
     _flickManager._handleToggleFullscreen();
