@@ -209,7 +209,7 @@ class FlickVideoManager extends ChangeNotifier {
     _videoPlayerController?.pause();
     _videoPlayerController?.removeListener(_videoListener);
     _videoPlayerController?.dispose();
-
+    _videoPlayerController = null;
     super.dispose();
   }
 }
